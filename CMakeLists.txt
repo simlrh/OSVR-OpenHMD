@@ -13,37 +13,37 @@ set(OPENHMD_SOURCES
 	${OPENHMD_DIR}/src/omath.c
 	${OPENHMD_DIR}/src/platform-posix.c
 	${OPENHMD_DIR}/src/fusion.c
-)
+	)
 OPTION(OPENHMD_DRIVER_OCULUS_RIFT "Oculus Rift DK1 and DK2" ON)
 OPTION(OPENHMD_DRIVER_EXTERNAL "External sensor driver" OFF)
 OPTION(OPENHMD_DRIVER_ANDROID "General Android driver" OFF)
 
 if(OPENHMD_DRIVER_OCULUS_RIFT)
 	set(OPENHMD_SOURCES ${OPENHMD_SOURCES} 
-	${OPENHMD_DIR}/src/drv_oculus_rift/rift.c
-	${OPENHMD_DIR}/src/drv_oculus_rift/packet.c
-	)
+		${OPENHMD_DIR}/src/drv_oculus_rift/rift.c
+		${OPENHMD_DIR}/src/drv_oculus_rift/packet.c
+		)
 	add_definitions(-DDRIVER_OCULUS_RIFT)
 endif(OPENHMD_DRIVER_OCULUS_RIFT)
 
 if (OPENHMD_DRIVER_EXTERNAL)
 	set(OPENHMD_SOURCES ${OPENHMD_SOURCES} 
-	${OPENHMD_DIR}/src/drv_external/external.c
-	)
+		${OPENHMD_DIR}/src/drv_external/external.c
+		)
 	add_definitions(-DDRIVER_EXTERNAL)
 endif(OPENHMD_DRIVER_EXTERNAL)
 
 if (OPENHMD_DRIVER_ANDROID)
 	set(OPENHMD_SOURCES ${OPENHMD_SOURCES} 
-	${OPENHMD_DIR}/src/drv_android/android.c
-	)
+		${OPENHMD_DIR}/src/drv_android/android.c
+		)
 	add_definitions(-DDRIVER_ANDROID)
 endif(OPENHMD_DRIVER_ANDROID)
 
 add_definitions(-DOHMD_STATIC)
 
 if (WIN32)
-   execute_process(COMMAND powershell -Command "(gc ${OPENHMD_DIR}/src/platform-win32.c) -replace '__stdcall DWORD', 'DWORD __stdcall' | Out-File ${OPENHMD_DIR}/src/platform-win32.c")
+   	execute_process(COMMAND powershell -Command "(gc ${OPENHMD_DIR}/src/platform-win32.c) -replace '__stdcall DWORD', 'DWORD __stdcall' | Out-File ${OPENHMD_DIR}/src/platform-win32.c")
 endif(WIN32)
 
 # HIDAPI
@@ -51,18 +51,21 @@ set(HIDAPI_DIR "${CMAKE_CURRENT_LIST_DIR}/vendor/hidapi")
 include_directories(${HIDAPI_DIR}/hidapi)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-   set (HIDAPI_SOURCES ${HIDAPI_DIR}/mac/hid.c)
-   set (LIBS ${LIBS} "-framework CoreFoundation -framework IOKit")
+   	set (HIDAPI_SOURCES ${HIDAPI_DIR}/mac/hid.c)
+   	set (LIBS ${LIBS} "-framework CoreFoundation -framework IOKit")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 if (WIN32)
-   set (HIDAPI_SOURCES ${HIDAPI_DIR}/windows/hid.c)
-   set (LIBS ${LIBS} setupapi)
+   	set (HIDAPI_SOURCES ${HIDAPI_DIR}/windows/hid.c)
+   	set (LIBS ${LIBS} setupapi)
 endif(WIN32)
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set (HIDAPI_SOURCES ${HIDAPI_DIR}/libusb/hid.c)
-	set (LIBS ${LIBS} pkg-config libusb-1.0)
+   	set (HIDAPI_SOURCES ${HIDAPI_DIR}/libusb/hid.c)
+   	find_package(PkgConfig REQUIRED)
+   	pkg_search_module(LIBUSB REQUIRED libusb-1.0)
+   	set (LIBS ${LIBS} ${LIBUSB_LIBRARIES})
+   	include_directories(${LIBUSB_INCLUDE_DIRS})
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 # OSVR Plugin

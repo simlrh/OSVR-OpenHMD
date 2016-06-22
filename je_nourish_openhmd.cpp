@@ -60,38 +60,34 @@ namespace {
 	
 	class HardwareDetection {
 		public:
-			HardwareDetection() {
+			HardwareDetection() : m_found(false) {
 				ohmd_ctx = ohmd_ctx_create();
 			}
 			
 			OSVR_ReturnCode operator()(OSVR_PluginRegContext ctx) {
-				int num_devices = ohmd_ctx_probe(ohmd_ctx);
 
-				if (num_devices < 0) {
-					std::cout << "OpenHMD failed to probe devices: " << ohmd_ctx_get_error(ohmd_ctx) << std::endl;
-					return OSVR_RETURN_FAILURE;
-				}
-				
-				std::string path;
-				std::string product;
+                                if (!m_found) {
+                                        int num_devices = ohmd_ctx_probe(ohmd_ctx);
 
-				for (int i = 0; i < num_devices; i++) {
+                                        if (num_devices < 0) {
+                                                std::cout << "OpenHMD failed to probe devices: " << ohmd_ctx_get_error(ohmd_ctx) << std::endl;
+                                                return OSVR_RETURN_FAILURE;
+                                        }
+                                        
+                                        std::string path;
+                                        std::string product;
 
-					product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
+                                        for (int i = 0; i < num_devices; i++) {
 
-					if (product.compare("Rift (Devkit)") == 0) {
-						path = ohmd_list_gets(ohmd_ctx, i, OHMD_PATH);
+                                                product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
 
-						std::list<std::string>::iterator findIter = std::find(
-							devices.begin(), devices.end(), path);
-
-						if (findIter == devices.end()) {
-							devices.push_back(path);
-							osvr::pluginkit::registerObjectForDeletion(
-								ctx, new OculusHMD(ctx, ohmd_ctx, i));
-						}
-					}
-				}
+                                                if (product.compare("Rift (Devkit)") == 0) {
+                                                        osvr::pluginkit::registerObjectForDeletion(
+                                                                ctx, new OculusHMD(ctx, ohmd_ctx, i));
+                                                        m_found = true;
+                                                }
+                                        }
+                                }
 				
 				
 				return OSVR_RETURN_SUCCESS;
@@ -99,7 +95,7 @@ namespace {
 			
 		private:
 			ohmd_context* ohmd_ctx;
-			std::list<std::string> devices;
+			bool m_found;
 			
 			
 	};
