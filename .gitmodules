@@ -1,0 +1,6 @@
+[submodule "vendor/hidapi"]
+	path = vendor/hidapi
+	url = https://github.com/signal11/hidapi
+[submodule "vendor/OpenHMD"]
+	path = vendor/OpenHMD
+	url = https://github.com/OpenHMD/OpenHMD
