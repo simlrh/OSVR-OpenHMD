@@ -10,3 +10,5 @@ This is an OSVR plugin providing Oculus Rift DK1 & DK2 orientation tracking via 
 Then follow [the standard OSVR plugin build instructions](http://resource.osvr.com/docs/OSVR-Core/TopicWritingDevicePlugin.html).
 
 Tested on Windows, Linux and Mac. 64 bit binaries available on the releases page.
+
+The tracker device doesn't need configuration, but there are sample OSVR server config files for the DK1 display in the sample-configs folder.
