@@ -74,28 +74,28 @@ namespace {
 
 			OSVR_ReturnCode operator()(OSVR_PluginRegContext ctx) {
 
-                if (!m_found) {
-                    int num_devices = ohmd_ctx_probe(ohmd_ctx);
+				if (!m_found) {
+					int num_devices = ohmd_ctx_probe(ohmd_ctx);
 
-                    if (num_devices < 0) {
-                        std::cout << "OpenHMD failed to probe devices: " << ohmd_ctx_get_error(ohmd_ctx) << std::endl;
-                        return OSVR_RETURN_FAILURE;
-                    }
+					if (num_devices < 0) {
+						std::cout << "OpenHMD failed to probe devices: " << ohmd_ctx_get_error(ohmd_ctx) << std::endl;
+						return OSVR_RETURN_FAILURE;
+					}
 
-                    std::string path;
-                    std::string product;
+					std::string path;
+					std::string product;
 
-                    for (int i = 0; i < num_devices; i++) {
+					for (int i = 0; i < num_devices; i++) {
 
-                        product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
+						product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
 
-                        if (product.compare("Rift (Devkit)") == 0) {
-                            osvr::pluginkit::registerObjectForDeletion(
-                                    ctx, new OculusHMD(ctx, ohmd_ctx, i));
-                            m_found = true;
-                        }
-                    }
-                }
+						if (product.compare("Rift (Devkit)") == 0) {
+							osvr::pluginkit::registerObjectForDeletion(
+									ctx, new OculusHMD(ctx, ohmd_ctx, i));
+							m_found = true;
+						}
+					}
+				}
 
 
 				return OSVR_RETURN_SUCCESS;
