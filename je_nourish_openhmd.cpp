@@ -15,7 +15,7 @@
 #include <list>
 
 namespace {
-	
+
 	class OculusHMD {
 		public:
 			OculusHMD(OSVR_PluginRegContext ctx, ohmd_context* ohmd_ctx, int i) : m_context(ohmd_ctx) {
@@ -32,6 +32,10 @@ namespace {
 				m_dev.registerUpdateCallback(this);
 
 				osvrQuatSetIdentity(&m_state);
+			}
+
+			~OculusHMD() {
+				ohmd_close_device(m_device);
 			}
 
 			OSVR_ReturnCode update() {
@@ -57,47 +61,51 @@ namespace {
 			ohmd_context* m_context;
 			ohmd_device* m_device;
 	};
-	
+
 	class HardwareDetection {
 		public:
 			HardwareDetection() : m_found(false) {
 				ohmd_ctx = ohmd_ctx_create();
 			}
-			
+
+			~HardwareDetection() {
+				ohmd_ctx_destroy(ohmd_ctx);
+			}
+
 			OSVR_ReturnCode operator()(OSVR_PluginRegContext ctx) {
 
-                                if (!m_found) {
-                                        int num_devices = ohmd_ctx_probe(ohmd_ctx);
+                if (!m_found) {
+                    int num_devices = ohmd_ctx_probe(ohmd_ctx);
 
-                                        if (num_devices < 0) {
-                                                std::cout << "OpenHMD failed to probe devices: " << ohmd_ctx_get_error(ohmd_ctx) << std::endl;
-                                                return OSVR_RETURN_FAILURE;
-                                        }
-                                        
-                                        std::string path;
-                                        std::string product;
+                    if (num_devices < 0) {
+                        std::cout << "OpenHMD failed to probe devices: " << ohmd_ctx_get_error(ohmd_ctx) << std::endl;
+                        return OSVR_RETURN_FAILURE;
+                    }
 
-                                        for (int i = 0; i < num_devices; i++) {
+                    std::string path;
+                    std::string product;
 
-                                                product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
+                    for (int i = 0; i < num_devices; i++) {
 
-                                                if (product.compare("Rift (Devkit)") == 0) {
-                                                        osvr::pluginkit::registerObjectForDeletion(
-                                                                ctx, new OculusHMD(ctx, ohmd_ctx, i));
-                                                        m_found = true;
-                                                }
-                                        }
-                                }
-				
-				
+                        product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
+
+                        if (product.compare("Rift (Devkit)") == 0) {
+                            osvr::pluginkit::registerObjectForDeletion(
+                                    ctx, new OculusHMD(ctx, ohmd_ctx, i));
+                            m_found = true;
+                        }
+                    }
+                }
+
+
 				return OSVR_RETURN_SUCCESS;
 			}
-			
+
 		private:
 			ohmd_context* ohmd_ctx;
 			bool m_found;
-			
-			
+
+
 	};
 } // namespace
 
