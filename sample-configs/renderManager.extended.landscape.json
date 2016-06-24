@@ -15,7 +15,7 @@
         "window": {
             "title": "OSVR",
             "fullScreenEnabled": true,
-            "xPosition": 2560,
+            "xPosition": 1920,	// Change this to put the window onto your HMD display
             "yPosition": 0
         },
 
