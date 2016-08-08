@@ -1,4 +1,4 @@
 {
  	"display": "Oculus_Rift_DK1.json",
-	"renderManagerConfig": "enderManager.extended.landscape.json"
+	"renderManagerConfig": "renderManager.extended.landscape.json"
 }
