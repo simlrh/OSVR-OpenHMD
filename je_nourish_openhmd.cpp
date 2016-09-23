@@ -82,14 +82,13 @@ namespace {
 						return OSVR_RETURN_FAILURE;
 					}
 
-					std::string path;
 					std::string product;
 
 					for (int i = 0; i < num_devices; i++) {
 
 						product = ohmd_list_gets(ohmd_ctx, i, OHMD_PRODUCT);
 
-						if (product.compare("Rift (Devkit)") == 0) {
+						if (product.compare("Dummy Device") != 0) {
 							osvr::pluginkit::registerObjectForDeletion(
 									ctx, new OculusHMD(ctx, ohmd_ctx, i));
 							m_found = true;
