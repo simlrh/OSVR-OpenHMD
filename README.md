@@ -1,4 +1,4 @@
-# OSVR-OpenHMD Plugin
+# OSVR-OpenHMD Plugin [![Donate](https://nourish.je/assets/images/donate.svg)](http://ko-fi.com/A250KJT)
 
 This is an OSVR plugin providing Oculus Rift DK1 & DK2 orientation tracking via OpenHMD. OpenHMD and hidapi are embedded so you don't need those libraries installed.
 
